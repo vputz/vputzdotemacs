@@ -1,15 +1,32 @@
-(require 'site-gentoo)
 (package-initialize)
 (add-to-list 'load-path "~/.emacs.d/emacs-lisp")
-(load "~/.emacs.d/emacs-lisp/imathconv.el")
-(require 'anything)
+;; (load "~/.emacs.d/emacs-lisp/imathconv.el")
+;; MELPA
+(require 'package)
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.org/packages/") t)
+(package-refresh-contents)
+(if (not (package-installed-p 'use-package))
+    (progn
+      (package-refresh-contents)
+      (package-install 'use-package)))
+(require 'use-package)
+(package-initialize)
+(setq use-package-always-ensure t)
+(use-package solarized-theme)
+(use-package dash)
+(use-package yasnippet)
+(use-package flycheck)
+(use-package web-mode)
+(use-package anything)
+(use-package ido)
+(use-package smart-tab
+	     :config (global-smart-tab-mode 1))
+;; from bytes.inso.cc/2011/08/13/auto-installing-packages-in-emacs-with-elpa-and-el-get
 ;;(require 'ipython)
 ;;(setq py-python-command-args '("--matplotlib" "--colors" "LightBG"))
 
-(require 'smart-tab)
-(global-smart-tab-mode 1)
-
-(require 'anything-config)
+(use-package anything-config)
 (setq anything-sources
       (list
        anything-c-source-man-pages
@@ -125,20 +142,6 @@ point."
 ;;(add-hook 'emacs-lisp-mode-hook 'my-tab-fix)
 ;;(add-hook 'c++-mode-hook        'my-tab-fix)
 
-;; MELPA
-(require 'package)
-(add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/") t)
-;; from bytes.inso.cc/2011/08/13/auto-installing-packages-in-emacs-with-elpa-and-el-get
-(require 'el-get)
-(setq my-el-get-packages
-	(append
-	'(yasnippet markdown-mode solarized-theme dash flycheck web-mode)
-	(mapcar 'el-get-source-name el-get-sources)))
-(el-get 'sync my-el-get-packages)
-
-;; semantic
-(package-initialize)
 
 (show-paren-mode t)
 (custom-set-variables
