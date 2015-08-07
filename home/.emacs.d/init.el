@@ -129,6 +129,13 @@ point."
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.org/packages/") t)
+;; from bytes.inso.cc/2011/08/13/auto-installing-packages-in-emacs-with-elpa-and-el-get
+(require 'el-get)
+(setq my-el-get-packages
+	(append
+	'(yasnippet markdown-mode solarized-theme dash flycheck web-mode)
+	(mapcar 'el-get-source-name el-get-sources)))
+(el-get 'sync my-el-get-packages)
 
 ;; semantic
 (package-initialize)
