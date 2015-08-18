@@ -23,6 +23,7 @@
 (use-package web-mode)
 (use-package anything)
 (use-package ido)
+(use-package feature-mode)
 (use-package yaml-mode)
 (use-package smart-tab
 	     :config (setq smart-tab-using-hippie-expand t)
@@ -51,7 +52,6 @@
 
 (add-to-list 'hippie-expand-try-functions-list
          'yas/hippie-try-expand)
-(global-set-key (kbd "TAB") 'hippie-expand)
 
 (require 'recentf)
 (recentf-mode 1)
@@ -99,11 +99,11 @@
 (defun indent-or-complete ()
   "Complete if point is at end of line, and indent line."
   (interactive)
-  (if (looking-at "$")
+  (if (and (looking-at "$") (not (looking-back "^\\s-*")))
       (hippie-expand nil))
   (indent-for-tab-command)
-)
-
+  )
+(global-set-key (kbd "TAB") 'indent-or-complete)
 
 (show-paren-mode t)
 (custom-set-variables
