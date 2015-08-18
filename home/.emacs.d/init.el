@@ -1,3 +1,4 @@
+
 (package-initialize)
 (add-to-list 'load-path "~/.emacs.d/emacs-lisp")
 ;; (load "~/.emacs.d/emacs-lisp/imathconv.el")
@@ -13,30 +14,24 @@
 (require 'use-package)
 (package-initialize)
 (setq use-package-always-ensure t)
-(use-package solarized-theme)
+(use-package solarized-theme
+  :config (load-theme 'solarized-dark))
 (use-package dash)
-(use-package yasnippet)
+(use-package yasnippet
+  :config (yas-global-mode t))
 (use-package flycheck)
 (use-package web-mode)
 (use-package anything)
 (use-package ido)
+(use-package yaml-mode)
 (use-package smart-tab
-	     :config (global-smart-tab-mode 1))
+	     :config (setq smart-tab-using-hippie-expand t)
+                     (global-smart-tab-mode 1))
 ;; from bytes.inso.cc/2011/08/13/auto-installing-packages-in-emacs-with-elpa-and-el-get
 ;;(require 'ipython)
 ;;(setq py-python-command-args '("--matplotlib" "--colors" "LightBG"))
 
-(use-package anything-config)
-(setq anything-sources
-      (list
-       anything-c-source-man-pages
-       anything-c-source-locate
-       anything-c-source-occur
-       anything-c-source-buffers
-       anything-c-source-emacs-commands))
-
 (setq inhibit-startup-message t)		     
-(setq default-major-mode 'text-mode)
 ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
 ;; (normal-erase-is-backspace-mode)
 ;; add conf files to auto-mode-alist
@@ -54,24 +49,14 @@
 	("http" . "odysseus:3128")
 	("https" . "odysseus:3128")))
 
+(add-to-list 'hippie-expand-try-functions-list
+         'yas/hippie-try-expand)
+(global-set-key (kbd "TAB") 'hippie-expand)
 
 (require 'recentf)
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
 (global-set-key "\C-x\ \C-r" 'recentf-open-files)
-
-;; setting up python according to http://www.emacswiki.org/emacs/PythonProgrammingInEmacs#toc5
-(setq
- python-shell-interpreter "ipython"
- python-shell-interpreter-args ""
- python-shell-prompt-regexp "In \\[[0-9]+\\]: "
- python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
- python-shell-completion-setup-code
-   "from IPython.core.completerlib import module_completion"
- python-shell-completion-module-string-code
-   "';'.join(module_completion('''%s'''))\n"
- python-shell-completion-string-code
-   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
 ;;imath helper
 (defun imath-clean ()
@@ -82,17 +67,6 @@
 ;;ido
 (require 'ido)
 (ido-mode t)
-
-;; ident or complete using tab
-(defun indent-or-expand (arg)
-  "Either indent according to mode, or expand the word preceding
-point."
-  (interactive "*P")
-  (if (and
-       (or (bobp) (= ?w (char-syntax (char-before))))
-       (or (eobp) (not (= ?w (char-syntax (char-after))))))
-      (dabbrev-expand arg)
-    (indent-according-to-mode)))
 
 ;;flycheck
 ;; turn on flychecking globally
@@ -122,25 +96,13 @@ point."
 
 (setq imaxima-use-maxima-mode-flag t)
 
-;;(defun indent-or-complete ()
-;;  "Complete if point is at end of line, and indent line."
-;;  (interactive)
-;;  (if (looking-at "$")
-;;      (hippie-expand nil))
-;;  (indent-for-tab-command)
-;;)
-;; map that to tab in files
-;;(add-hook 
-;; 'find-file-hooks 
-;; (function (lambda ()
-;;	     (local-set-key (kbd "TAB") 'indent-or-complete))))
-;;(defun my-tab-fix ()
-;;  (local-set-key [tab] 'indent-or-expand))
-;;(local-set-key [tab] 'indent-or-expand)
-;;(add-hook 'c-mode-hook          'my-tab-fix)
-;;(add-hook 'sh-mode-hook         'my-tab-fix)
-;;(add-hook 'emacs-lisp-mode-hook 'my-tab-fix)
-;;(add-hook 'c++-mode-hook        'my-tab-fix)
+(defun indent-or-complete ()
+  "Complete if point is at end of line, and indent line."
+  (interactive)
+  (if (looking-at "$")
+      (hippie-expand nil))
+  (indent-for-tab-command)
+)
 
 
 (show-paren-mode t)
@@ -149,35 +111,16 @@ point."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" default)))
- '(ecb-layout-name "pel1")
- '(ecb-options-version "2.40")
+ '(custom-safe-themes (quote ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
  '(global-font-lock-mode t nil (font-lock))
  '(global-smart-tab-mode t)
- '(org-agenda-files (quote ("~/org/notes.org" "~/marion/notes.org")))
- '(yas-global-mode t nil (yasnippet))
- )
+ '(nil nil t)
+ '(org-agenda-files (quote ("~/org/notes.org" "~/marion/notes.org"))))
+;;; init.el ends here
 
-(require 'color-theme)
-(eval-after-load "color-theme"
-  '(progn
-     (color-theme-initialize)
-     (load-theme 'solarized-dark)
-     ))
-
-
-;(setq org-default-notes-file (concat org-directory "/notes.org"))
-;(define-key global-map "\C-cc" 'org-capture)
-;(define-key global-map "\C-ca" 'org-agenda)
-
-(put 'narrow-to-region 'disabled nil)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-;;; init.el ends here
-
